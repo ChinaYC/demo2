@@ -1,0 +1,502 @@
+原网址阅读:http://www.bieryun.com/611.html
+
+
+在日常工作中，我们常常会进行文件读写操作，除去我们最常用的纯文本文件读写，更多时候我们需要对Excel中的数据进行读取操作，本文将介绍Excel读写的常用方法，希望对大家学习Java读写Excel会有帮助。
+
+在开始进行Java读写Excel前，我们需要先下一个jxl的jar包，这个jar包中提供了相关读写Excel的方法，在百度里所搜一下jxl.jar下载就会出现很多下载地址了，这里不再累述。随后我们将jxl.jar放到classpath下或者在工程的buildpath中添加jxl.jar后，便可以开始Java读写Excel的神秘之旅了。
+
+1、Java读取Excel数据
+
+首先，创建一个xls文件（如：jxltest.xls），然后在文件中添加一些数据，Excel文件创建完成后，我们便可以开始写代码读取了：
+
+代码如下：
+
+ 
+
+[java] view plaincopy
+
+    package jxl.zhanhj;
+    import java.io.File;
+    import java.io.FileInputStream;
+    import java.io.FileNotFoundException;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import jxl.Sheet;
+    import jxl.Workbook;
+    import jxl.read.biff.BiffException;
+    public class GetExcelInfo {
+        public static void main(String[] args) {
+            GetExcelInfo obj = new GetExcelInfo();
+            // 此处为我创建Excel路径：E:/zhanhj/studysrc/jxl下
+            File file = new File(“E:/zhanhj/studysrc/jxl/getExcleinfo.xls”);
+            obj.readExcel(file);
+        }
+        // 去读Excel的方法readExcel，该方法的入口参数为一个File对象
+        public void readExcel(File file) {
+            try {
+                // 创建输入流，读取Excel
+                InputStream is = new FileInputStream(file.getAbsolutePath());
+                // jxl提供的Workbook类
+                Workbook wb = Workbook.getWorkbook(is);
+                // Excel的页签数量
+                int sheet_size = wb.getNumberOfSheets();
+                for (int index = 0; index < sheet_size; index++) {
+                    // 每个页签创建一个Sheet对象
+                    Sheet sheet = wb.getSheet(index);
+                    // sheet.getRows()返回该页的总行数
+                    for (int i = 0; i < sheet.getRows(); i++) {
+                        // sheet.getColumns()返回该页的总列数
+                        for (int j = 0; j < sheet.getColumns(); j++) {
+                            String cellinfo = sheet.getCell(j, i).getContents();
+                            System.out.println(cellinfo);
+                        }
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (BiffException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+上面这个例子是一个很简单读取Excel并将各单元格的数据打印到控制台上，更多Excel操作方法，请参加jxl API。
+
+ 
+
+下面我们再对上面的例子进行一个小小的扩展：
+
+1、读取一个目录下的所有Excel文件
+
+2、读取的每个Excel文件的数据写入到不同的txt中
+
+代码如下：
+
+[java] view plaincopy
+
+    package jxl.zhanhj;
+    import java.io.File;
+    import java.io.FileInputStream;
+    import java.io.FileNotFoundException;
+    import java.io.FileWriter;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.io.PrintWriter;
+    import jxl.Sheet;
+    import jxl.Workbook;
+    import jxl.read.biff.BiffException;
+    public class GetExcelInfo {
+        public static void main(String[] args) {
+            GetExcelInfo obj = new GetExcelInfo();
+            // 此处路径指定到目录而不是单个文件
+            File file = new File(“E:/zhanhj/studysrc/jxl”);
+            if (file.isDirectory()) {
+                File[] files = file.listFiles();
+                for (File f : files)
+                    // 如果还存在子目录则继续读取子目录下的Excel文件
+                    if (f.isDirectory()) {
+                        File[] subfiles = f.listFiles();
+                        for (File fi : subfiles) {
+                            // 对文件进行过滤，只读取Excel文件，非Excel文件不读取，否则会出错
+                            if (fi.getName().indexOf(“.xls”) > 0) {
+                                obj.readExcelWrite2TXT(fi);
+                            }
+                        }
+                    } else {
+                        // 对文件进行过滤，只读取Excel文件，非Excel文件不读取，否则会出错
+                        if (f.getName().indexOf(“.xls”) > 0) {
+                            obj.readExcelWrite2TXT(f);
+                        }
+                    }
+            }
+        }
+        // 去读Excel的方法readExcel，该方法的入口参数为一个File对象
+        public void readExcelWrite2TXT(File file) {
+            // 创建文件输出流
+            FileWriter fw = null;
+            PrintWriter out = null;
+            try {
+                // 指定生成txt的文件路径
+                String fileName = file.getName().replace(“.xls”, “”);
+                fw = new FileWriter(file.getParent() + “/” + fileName + “.txt”);
+                out = new PrintWriter(fw);
+                // 创建输入流，读取Excel
+                InputStream is = new FileInputStream(file.getAbsolutePath());
+                // jxl提供的Workbook类
+                Workbook wb = Workbook.getWorkbook(is);
+                // Excel的页签数量
+                int sheet_size = wb.getNumberOfSheets();
+                for (int index = 0; index < sheet_size; index++) {
+                    // 每个页签创建一个Sheet对象
+                    Sheet sheet = wb.getSheet(index);
+                    // sheet.getRows()返回该页的总行数
+                    for (int i = 0; i < sheet.getRows(); i++) {
+                        // sheet.getColumns()返回该页的总列数
+                        for (int j = 0; j < sheet.getColumns(); j++) {
+                            String cellinfo = sheet.getCell(j, i).getContents();
+                            // 将从Excel中读取的数据写入到txt中
+                            out.println(cellinfo);
+                        }
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (BiffException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    // 记得关闭流
+                    out.close();
+                    fw.close();
+                    // 由于此处用到了缓冲流，如果数据量过大，不进行flush操作，某些数据将依旧
+                    // 存在于内从中而不会写入文件，此问题一定要注意
+                    out.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+ 
+
+下面我们来一起对Java读取Excel流程做一个总结：
+
+1、打开工作文件Workbook，在此之前先用java的io流创建或者读取文件
+
+2、打开工作表Sheet
+3、读行，然后读列（行和列是从0开始的）
+4、进行数据进行操作
+
+接着上一节的内容，本节主要讲述如何通过Java程序向Excel文件中写数据，包括：1、数据类型的控制；2、单元格及数据的格式化。
+
+要快速上手，我们还是通过阅读代码来学习，这样可以帮助大家建立一个更直观的概念和认识。
+
+ 
+
+1、写入Excel及数据类型控制
+
+程序描述：通过Java程序新建一个名为test.xls的文件，并在Excel的第一行第一列写一个字符串，在第一行第二列写一个数字，在第一行第三列写一个日期。
+
+[java] view plaincopy
+
+    package jxl.zhanhj;
+    import java.io.File;
+    import java.util.Date;
+    import jxl.Workbook;
+    import jxl.write.Label;
+    import jxl.write.WritableSheet;
+    import jxl.write.WritableWorkbook;
+    import jxl.write.Number;
+    import jxl.write.DateTime;
+    public class CreateExcel {
+        public static void main(String args[]) {
+            try {
+                // 打开文件
+                WritableWorkbook book = Workbook.createWorkbook(new File(
+                        “test.xls”));
+                // 生成名为“sheet1”的工作表，参数0表示这是第一页
+                WritableSheet sheet = book.createSheet(“sheet1”, 0);
+                // 在Label对象的构造子中指名单元格位置是第一列第一行(0,0),单元格内容为string
+                Label label = new Label(0, 0, “string”);
+                // 将定义好的单元格添加到工作表中
+                sheet.addCell(label);
+                // 生成一个保存数字的单元格,单元格位置是第二列，第一行，单元格的内容为1234.5
+                Number number = new Number(1, 0, 1234.5);
+                sheet.addCell(number);
+                // 生成一个保存日期的单元格，单元格位置是第三列，第一行，单元格的内容为当前日期
+                DateTime dtime = new DateTime(2, 0, new Date());
+                sheet.addCell(dtime);
+                // 写入数据并关闭文件
+                book.write();
+                book.close();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+ 
+
+几个重要对象解析：
+
+1、WritableWorkbook：用于创建打开Excel文件
+
+2、WritableSheet：用于创建Excel中的页签
+
+3、Label：将单元格指定为文本型，并写入字符串
+
+4、Number：将单元格指定为数字型，并可写入数字
+
+5、DateTime：将单元格指定为日期型，并可写入日期
+
+掌握这几个类及其方法后，我们便可以方便的向Excel进行写入操作了，更多对象请参见jxl api。
+
+ 
+
+2、写入时单元格及数据的格式化
+
+程序描述：在数据写入到单元格后，对数据进行格式化，包括字体大小、颜色等
+
+[java] view plaincopy
+
+    package jxl.zhanhj;
+    import java.io.File;
+    import java.util.Date;
+    import jxl.CellType;
+    import jxl.Workbook;
+    import jxl.format.Border;
+    import jxl.format.BorderLineStyle;
+    import jxl.format.Colour;
+    import jxl.format.VerticalAlignment;
+    import jxl.format.Alignment;
+    import jxl.write.DateFormat;
+    import jxl.write.Label;
+    import jxl.write.NumberFormat;
+    import jxl.write.WritableCellFormat;
+    import jxl.write.WritableFont;
+    import jxl.write.WritableSheet;
+    import jxl.write.WritableWorkbook;
+    import jxl.write.Number;
+    import jxl.write.DateTime;
+    import jxl.write.WriteException;
+    public class CreateExcel {
+        public static void main(String args[]) {
+            try {
+                // 打开文件
+                WritableWorkbook book = Workbook
+                        .createWorkbook(new File(“test.xls”));
+                // 生成名为“sheet1”的工作表，参数0表示这是第一页
+                WritableSheet sheet = book.createSheet(“sheet1”, 0);
+                // 在Label对象的构造子中指名单元格位置是第一列第一行(0,0),单元格内容为string
+                Label label = new Label(0, 0, “string”,
+                        getDataCellFormat(CellType.LABEL));
+                // 将定义好的单元格添加到工作表中
+                sheet.addCell(label);
+                // 生成一个保存数字的单元格,单元格位置是第二列，第一行，单元格的内容为1234.5
+                Number number = new Number(1, 0, 1234.5,
+                        getDataCellFormat(CellType.NUMBER));
+                sheet.addCell(number);
+                // 生成一个保存日期的单元格，单元格位置是第三列，第一行，单元格的内容为当前日期
+                DateTime dtime = new DateTime(2, 0, new Date(),
+                        getDataCellFormat(CellType.DATE));
+                sheet.addCell(dtime);
+                // 写入数据并关闭文件
+                book.write();
+                book.close();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        public static WritableCellFormat getDataCellFormat(CellType type) {
+            WritableCellFormat wcf = null;
+            try {
+                // 字体样式
+                if (type == CellType.NUMBER || type == CellType.NUMBER_FORMULA) {// 数字
+                    NumberFormat nf = new NumberFormat(“#.00”);
+                    wcf = new WritableCellFormat(nf);
+                } else if (type == CellType.DATE) {// 日期
+                    DateFormat df = new DateFormat(“yyyy-MM-dd hh:mm:ss”);
+                    wcf = new WritableCellFormat(df);
+                } else {
+                    WritableFont wf = new WritableFont(WritableFont.TIMES, 10,
+                            WritableFont.NO_BOLD, false);
+                    // 字体颜色
+                    wf.setColour(Colour.RED);
+                    wcf = new WritableCellFormat(wf);
+                }
+                // 对齐方式
+                wcf.setAlignment(Alignment.CENTRE);
+                wcf.setVerticalAlignment(VerticalAlignment.CENTRE);
+                // 设置上边框
+                wcf.setBorder(Border.TOP, BorderLineStyle.THIN);
+                // 设置下边框
+                wcf.setBorder(Border.BOTTOM, BorderLineStyle.THIN);
+                // 设置左边框
+                wcf.setBorder(Border.LEFT, BorderLineStyle.THIN);
+                // 设置右边框
+                wcf.setBorder(Border.RIGHT, BorderLineStyle.THIN);
+                // 设置背景色
+                wcf.setBackground(Colour.YELLOW);
+                // 自动换行
+                wcf.setWrap(true);
+            } catch (WriteException e) {
+                e.printStackTrace();
+            }
+            return wcf;
+        }
+    }
+
+ 
+
+效果：
+
+几个重要对象解析：
+
+1、WritableCellFormat：用于格式化单元格
+
+2、WritableFont：用于格式化字体
+
+更多请参加jxl api。
+
+到这里本节的讲解就结束了，下面我们可以总结出Excel的写入流程：
+
+1、用WritableWorkbook创建Excel文件
+
+2、用WritableSheet创建页签
+
+3、用Label、Number、DateTime等创建单元格内容
+
+4、在创建单元格内容时，我们可以给写一个格式化方法，对单元格内容进行格式化
+
+5、格式化主要包括2类：单元格格式化（WritableCellFormat）、值的格式化（WritableFont）
+
+继前两节的Java读取、写入Excel后，本期将推出Java修改Excel中数据以及格式的方法和技巧，如果大家学习了前面的读、写Excel，相信学习本节内容将是不费吹灰之力啊，不过要灵活的运用还需多加努力呀。
+
+好了，为了展示Java修改Excel的魅力，我们先来设计一个业务场景，这个场景是根据最近做过的一件事设计出来的：
+
+在一张Excel中，有一批学生信息数据如下图：
+
+ 
+
+图1   Excel中的示例数据
+
+在创建Excel时，将Excel中的所在省，所在市做成了下拉菜单以供选择，设置如下：
+
+             
+
+图2    所在省一览                               图3     所在市一览
+
+从图1我们会发现一个问题，王五的填写所在省为：四川省，而所在市为：石家庄，大家都石家庄是河北的省会，所以王五的这种情况属于Excel中的错误数据，那么下面我们来做一件事：将Excel中所有出现省市关系弄错了的，在Excel中进行标注出来！！
+
+代码如下：
+
+[java] view plaincopy
+
+    package jxl.zhanhj;
+    import java.io.*;
+    import java.util.HashMap;
+    import jxl.*;
+    import jxl.format.Alignment;
+    import jxl.format.Border;
+    import jxl.format.BorderLineStyle;
+    import jxl.format.Colour;
+    import jxl.format.VerticalAlignment;
+    import jxl.write.Label;
+    import jxl.write.WritableCellFormat;
+    import jxl.write.WritableFont;
+    import jxl.write.WritableSheet;
+    import jxl.write.WritableWorkbook;
+    import jxl.write.WriteException;
+    public class UpdateExcel {
+        public static void main(String args[]) {
+            WritableWorkbook book = null;
+            HashMap<String, String> map = new HashMap<String, String>();
+            map = getPCKV();
+            try {
+                // Excel获得文件
+                Workbook wb = Workbook.getWorkbook(new File(“update_test.xls”));
+                // 打开一个文件的副本，并且指定数据写回到原文件
+                book = Workbook.createWorkbook(new File(“update_test.xls”), wb);
+                Sheet sheet = book.getSheet(0);
+                WritableSheet wsheet = book.getSheet(0);
+                int colunms = sheet.getColumns();
+                // 不读表头
+                for (int i = 1; i < sheet.getRows(); i++) {
+                    StringBuffer pcin = new StringBuffer();
+                    // 将省市组合起来与HashMap进行匹配
+                    String province = sheet.getCell(4, i).getContents().trim();
+                    String city = sheet.getCell(5, i).getContents().trim();
+                    pcin = pcin.append(province).append(“-“).append(city);
+                    // 如果不匹配，则在该行的最后加入标注信息
+                    if (!map.containsValue(pcin.toString())) {
+                        Label label = new Label(colunms, i, “省市选择出错”,
+                                getDataCellFormat());
+                        wsheet.addCell(label);
+                    }
+                }
+                book.write();
+            } catch (Exception e) {
+                System.out.println(e);
+            } finally {
+                try {
+                    book.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        // 设置标注的格式为黄底红字
+        public static WritableCellFormat getDataCellFormat() {
+            WritableCellFormat wcf = null;
+            try {
+                WritableFont wf = new WritableFont(WritableFont.TIMES, 10,
+                        WritableFont.BOLD, false);
+                // 字体颜色
+                wf.setColour(Colour.RED);
+                wcf = new WritableCellFormat(wf);
+                // 对齐方式
+                wcf.setAlignment(Alignment.CENTRE);
+                wcf.setVerticalAlignment(VerticalAlignment.CENTRE);
+                // 设置上边框
+                wcf.setBorder(Border.TOP, BorderLineStyle.THIN);
+                // 设置下边框
+                wcf.setBorder(Border.BOTTOM, BorderLineStyle.THIN);
+                // 设置左边框
+                wcf.setBorder(Border.LEFT, BorderLineStyle.THIN);
+                // 设置右边框
+                wcf.setBorder(Border.RIGHT, BorderLineStyle.THIN);
+                // 设置背景色
+                wcf.setBackground(Colour.YELLOW);
+                // 自动换行
+                wcf.setWrap(true);
+            } catch (WriteException e) {
+                e.printStackTrace();
+            }
+            return wcf;
+        }
+        // 省市对应关系Map
+        public static HashMap<String, String> getPCKV() {
+            HashMap<String, String> map = new HashMap<String, String>();
+            map.put(“01”, “河北省-石家庄”);
+            map.put(“02”, “河北省-秦皇岛”);
+            map.put(“03”, “河北省-唐山”);
+            map.put(“04”, “四川省-成都”);
+            map.put(“05”, “四川省-绵阳”);
+            map.put(“06”, “四川省-达州”);
+            map.put(“07”, “广西省-桂林”);
+            map.put(“08”, “广西省-南宁”);
+            map.put(“09”, “广西省-柳州”);
+            return map;
+        }
+    }
+
+ 
+
+代码执行结果如图所示：
+
+图4      执行结果
+
+ 
+
+到这里，Java修改Excel单元格的数据及格式便告一段落了，本节给出了一个较为简单的场景进行了讲述，目的在于引导大家学习Java修改Excel的常用流程和方法，若读者能将Java操作Excel学得更深，往往可以发挥更大的作用。比如程序中利用HashMap来存储对应关系，如果要将全国的省市纳入进来，利用HashMap不是很好的做好，我们可以改成通过利用数据库来达到同样的效果，这里的改进留给读者。
+
+ 
+
+读到这里，可能有部分读者会产生疑问，这种操作，直接在Excel中，我们不是也可以操作吗？为什么通过Java来修改，是不是多此一举了？其实不然，如果读者将Java读写文件结合起来，以及在将此程序稍微扩展一下，对每个Excel的所有页签进行遍历，那么Java程序处理的数据里和复杂度，远远不是单纯的Excel能企及的。举个简单的场景（仅仅将上述场景进行扩展）：
+
+如果一个学院要统计该学院所有学生的信息【格式和图1一样】，每个级发一个Excel，每个级不同专业的学生放在不同的页签中（sheet），如Excel样式下图所示：
+
+图5      09级学生信息统计表
+
+ 
+
+图6      10级学生信息统计表
+
+ 
+
+最终，学院要根据收集上来的学生信息导入到数据库中，如果你是那个负责导入数据的人，你便通过Java读写Excel功能将所有的数据转化成SQL语句，同时可以判断出哪些同学信息填写错误，是不是这种应用变得更有意义了？
