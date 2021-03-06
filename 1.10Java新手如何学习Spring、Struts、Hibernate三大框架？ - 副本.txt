@@ -1,12 +1,19 @@
 https://www.zhihu.com/question/21142149
-Èı´ó¿ò¼Ü¶Ô±È£¿ ¡ü
+ä¸‰å¤§æ¡†æ¶å¯¹æ¯”ï¼Ÿ â†‘
 
 
 https://www.jianshu.com/p/7b6a070119c7
 
-ÄÇÃ´¾Í´ÓÒÔÏÂ¼¸¸ö·½Ãæ¿ªÊ¼½éÉÜ£º
-SpringÊÇÊ²Ã´
-Spring´øÀ´ÁËÊ²Ã´
-SpringÓĞÊ²Ã´ºÃ´¦
-Spring½á¹¹Í¼
-SpringÓ¦ÓÃ³¡¾°
+é‚£ä¹ˆå°±ä»ä»¥ä¸‹å‡ ä¸ªæ–¹é¢å¼€å§‹ä»‹ç»ï¼š
+
+Springæ˜¯ä»€ä¹ˆ
+
+Springå¸¦æ¥äº†ä»€ä¹ˆ
+
+Springæœ‰ä»€ä¹ˆå¥½å¤„
+
+Springç»“æ„å›¾
+
+Springåº”ç”¨åœºæ™¯
+
+And then two years later, I found that I had almost forgotten 233
