@@ -3,7 +3,7 @@
 Java Exception：
 
 1、Error .
-2、Runtime Exception 运行时异常
+2、Runtime Exception 运行时异常.
 3、Exception
 4、throw 用户自定义异常
 
