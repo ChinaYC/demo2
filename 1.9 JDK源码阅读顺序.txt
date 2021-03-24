@@ -1,13 +1,14 @@
 https://blog.csdn.net/qq_21033663/article/details/79571506
 
-原文以上链接
+鍘熸枃浠ヤ笂閾炬帴
 
-标题为包名，后面序号为优先级1-4，优先级递减 
+鏍囬涓哄寘鍚嶏紝鍚庨潰搴忓彿涓轰紭鍏堢骇1-4锛屼紭鍏堢骇閫掑噺 
 
-1、java.lang
+1銆乯ava.lang
 
 1) Object 1
 2) String 1
 3) AbstractStringBuilder 1
 4) StringBuffer 1
 5) StringBuilder 1
+3.24
