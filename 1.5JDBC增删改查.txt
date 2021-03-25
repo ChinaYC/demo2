@@ -1,8 +1,8 @@
-���������࣬���������ַ���
+创建方法类，这里有两种方法
 
-1:��dao���д���һ��StudentDao�ӿڣ�����д��ɾ�Ĳ�ķ���������dao�д���StudentDaoImpl����ʵ�ֽӿڣ���ʵ��֮�еķ�����
+1:在dao包中创建一个StudentDao接口，里面写增删改查的方法，再在dao中创建StudentDaoImpl类来实现接口，并实现之中的方法。
 
-StudentDao�ӿڣ�
+StudentDao接口：
 
 package dao;
  
@@ -13,13 +13,13 @@ import entity.Subject;
 public interface SubjectDao {
 	/*
 	
-* 1.��������
+* 1.添加数据
 	 
-* 2.�鿴���ݣ�������Ϣ
+* 2.查看数据，返回信息
 	 
-* 3.�޸�
+* 3.修改
 	 
-* 4.ɾ��
+* 4.删除
 	 
 * 
 	
@@ -41,7 +41,8 @@ public boolean add(Subject subject);
 }
 
 --------------------- 
-���ߣ�̬ؼ�� 
-��Դ��CSDN 
-ԭ�ģ�https://blog.csdn.net/qq_36377960/article/details/80709055 
-��Ȩ����������Ϊ����ԭ�����£�ת���븽�ϲ������ӣ�
+作者：态丶度 
+来源：CSDN 
+原文：https://blog.csdn.net/qq_36377960/article/details/80709055 
+版权声明：本文为博主原创文章，转载请附上博文链接！
+内容消失
