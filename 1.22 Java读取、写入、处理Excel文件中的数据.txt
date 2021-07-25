@@ -3,7 +3,7 @@
 
 在日常工作中，我们常常会进行文件读写操作，除去我们最常用的纯文本文件读写，更多时候我们需要对Excel中的数据进行读取操作，本文将介绍Excel读写的常用方法，希望对大家学习Java读写Excel会有帮助。
 
-在开始进行Java读写Excel前，我们需要先下一个jxl的jar包，这个jar包中提供了相关读写Excel的方法，在百度里所搜一下jxl.jar下载就会出现很多下载地址了，这里不再累述。随后我们将jxl.jar放到classpath下或者在工程的buildpath中添加jxl.jar后，便可以开始Java读写Excel的神秘之旅了。
+在开始进行Java读写Excel前，我们需要先下一个jxl的jar包，这个jar包中提供了相关读写Excel的方法，在百度里所搜一下jxl.jar下载就会出现很多下载地址了，这里不再累述 。随后我们将jxl.jar放到classpath下或者在工程的buildpath中添加jxl.jar后，便可以开始Java读写Excel的神秘之旅了。 
 
 1、Java读取Excel数据
 
